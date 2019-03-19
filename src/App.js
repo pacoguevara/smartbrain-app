@@ -5,6 +5,7 @@ import Logo from './components/Logo/Logo'
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Rank from './components/Rank/Rank'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
+import Signin from './components/Signin/Signin'
 import Particles from 'react-particles-js'
 import Clarifai from 'clarifai'
 const app = new Clarifai.App({
@@ -17,7 +18,8 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {}
+      box: {},
+      route: 'signin'
     }
   }
 
@@ -50,32 +52,42 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
+  onRouteChange = () => {
+    this.setState({route: 'home'});
+  }
+
   render() {
     return (
       <div className="App">
         <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-        <Particles className='particles' params={{
-                particles: {
-                  line_linked: {
-                    shadow: {
-                      enable: true,
-                      color: "#3CA9D1",
-                      blur: 5
+        { this.state.route === 'signin' ? 
+          <Signin onRouteChange={ this.onRouteChange } />
+          :
+          <div>
+            <Logo />
+            <Rank />
+            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+            <Particles className='particles' params={{
+                    particles: {
+                      line_linked: {
+                        shadow: {
+                          enable: true,
+                          color: "#3CA9D1",
+                          blur: 5
+                        }
+                      },
+                      number: {
+                        value: 50,
+                        density: {
+                          enable: true,
+                          value_area: 800
+                        }
+                      }
                     }
-                  },
-                  number: {
-                    value: 50,
-                    density: {
-                      enable: true,
-                      value_area: 800
-                    }
-                  }
-                }
-              }} />
-        <FaceRecognition imageUrl={ this.state.imageUrl } box={ this.state.box }/>
+                  }} />
+            <FaceRecognition imageUrl={ this.state.imageUrl } box={ this.state.box }/>
+          </div>
+        }
       </div>
     );
   }
