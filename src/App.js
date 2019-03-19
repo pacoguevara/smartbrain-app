@@ -6,6 +6,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Rank from './components/Rank/Rank'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import Signin from './components/Signin/Signin'
+import Register from './components/Register/Register'
 import Particles from 'react-particles-js'
 import Clarifai from 'clarifai'
 const app = new Clarifai.App({
@@ -19,7 +20,8 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
-      route: 'signin'
+      route: 'signin',
+      isSigned: false
     }
   }
 
@@ -53,16 +55,19 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
+    if(route === 'signout'){
+      this.setState({ isSigned: false });
+    }else if(route === 'home'){
+      this.setState({ isSigned: true });
+    }
     this.setState({route: route});
   }
 
   render() {
     return (
       <div className="App">
-        <Navigation onRouteChange={ this.onRouteChange }/>
-        { this.state.route === 'signin' ? 
-          <Signin onRouteChange={ this.onRouteChange } />
-          :
+        <Navigation onRouteChange={ this.onRouteChange } isSigned={this.state.isSigned}/>
+        { this.state.route === 'home' ? 
           <div>
             <Logo />
             <Rank />
@@ -87,6 +92,12 @@ class App extends Component {
                   }} />
             <FaceRecognition imageUrl={ this.state.imageUrl } box={ this.state.box }/>
           </div>
+          : (
+            this.state.route === 'signin' ?
+              <Signin onRouteChange={ this.onRouteChange } />
+            : 
+              <Register onRouteChange={ this.onRouteChange } />
+          )
         }
       </div>
     );
